@@ -4,9 +4,9 @@ package example;
 option go_package = "github.com/adimaryadi70/proto/example";
 
 service MyService {
-  rpc MyMethod (MyRequest) returns (MyResponse);
+  rpc MyMethod(MyRequest) returns (MyResponse);
   rpc Hello(MyRequest) returns (MyResponse);
-  rpc StreamMessages(stream MyRequest) returns (stream MyResponse);
+  rpc StreamMessages (stream ChatMessage) returns (stream ChatMessage);
 }
 
 message MyRequest {
@@ -15,4 +15,8 @@ message MyRequest {
 
 message MyResponse {
   string result = 1;
+}
+
+message ChatMessage {
+    string content = 1;
 }

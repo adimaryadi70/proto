@@ -63,8 +63,8 @@ func (c *myServiceClient) StreamMessages(ctx context.Context, opts ...grpc.CallO
 }
 
 type MyService_StreamMessagesClient interface {
-	Send(*MyRequest) error
-	Recv() (*MyResponse, error)
+	Send(*ChatMessage) error
+	Recv() (*ChatMessage, error)
 	grpc.ClientStream
 }
 
@@ -72,12 +72,12 @@ type myServiceStreamMessagesClient struct {
 	grpc.ClientStream
 }
 
-func (x *myServiceStreamMessagesClient) Send(m *MyRequest) error {
+func (x *myServiceStreamMessagesClient) Send(m *ChatMessage) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *myServiceStreamMessagesClient) Recv() (*MyResponse, error) {
-	m := new(MyResponse)
+func (x *myServiceStreamMessagesClient) Recv() (*ChatMessage, error) {
+	m := new(ChatMessage)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -161,8 +161,8 @@ func _MyService_StreamMessages_Handler(srv interface{}, stream grpc.ServerStream
 }
 
 type MyService_StreamMessagesServer interface {
-	Send(*MyResponse) error
-	Recv() (*MyRequest, error)
+	Send(*ChatMessage) error
+	Recv() (*ChatMessage, error)
 	grpc.ServerStream
 }
 
@@ -170,12 +170,12 @@ type myServiceStreamMessagesServer struct {
 	grpc.ServerStream
 }
 
-func (x *myServiceStreamMessagesServer) Send(m *MyResponse) error {
+func (x *myServiceStreamMessagesServer) Send(m *ChatMessage) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *myServiceStreamMessagesServer) Recv() (*MyRequest, error) {
-	m := new(MyRequest)
+func (x *myServiceStreamMessagesServer) Recv() (*ChatMessage, error) {
+	m := new(ChatMessage)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
