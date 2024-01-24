@@ -2,14 +2,15 @@ syntax = "proto3";
 
 package example;
 option go_package = "github.com/adimaryadi70/proto/example";
+
 service MyService {
-  rpc MyMethod(MyRequest) returns (MyResponse);
+  rpc SampleServices (ReqExample) returns (ResExample);
 }
 
-message MyRequest {
+message ReqExample {
   string data = 1;
 }
 
-message MyResponse {
+message ResExample {
   string result = 1;
 }

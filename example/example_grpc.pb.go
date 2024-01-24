@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MyServiceClient interface {
-	MyMethod(ctx context.Context, in *MyRequest, opts ...grpc.CallOption) (*MyResponse, error)
+	SampleServices(ctx context.Context, in *ReqExample, opts ...grpc.CallOption) (*ResExample, error)
 }
 
 type myServiceClient struct {
@@ -33,9 +33,9 @@ func NewMyServiceClient(cc grpc.ClientConnInterface) MyServiceClient {
 	return &myServiceClient{cc}
 }
 
-func (c *myServiceClient) MyMethod(ctx context.Context, in *MyRequest, opts ...grpc.CallOption) (*MyResponse, error) {
-	out := new(MyResponse)
-	err := c.cc.Invoke(ctx, "/example.MyService/MyMethod", in, out, opts...)
+func (c *myServiceClient) SampleServices(ctx context.Context, in *ReqExample, opts ...grpc.CallOption) (*ResExample, error) {
+	out := new(ResExample)
+	err := c.cc.Invoke(ctx, "/example.MyService/SampleServices", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (c *myServiceClient) MyMethod(ctx context.Context, in *MyRequest, opts ...g
 // All implementations must embed UnimplementedMyServiceServer
 // for forward compatibility
 type MyServiceServer interface {
-	MyMethod(context.Context, *MyRequest) (*MyResponse, error)
+	SampleServices(context.Context, *ReqExample) (*ResExample, error)
 	mustEmbedUnimplementedMyServiceServer()
 }
 
@@ -54,8 +54,8 @@ type MyServiceServer interface {
 type UnimplementedMyServiceServer struct {
 }
 
-func (UnimplementedMyServiceServer) MyMethod(context.Context, *MyRequest) (*MyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MyMethod not implemented")
+func (UnimplementedMyServiceServer) SampleServices(context.Context, *ReqExample) (*ResExample, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SampleServices not implemented")
 }
 func (UnimplementedMyServiceServer) mustEmbedUnimplementedMyServiceServer() {}
 
@@ -70,20 +70,20 @@ func RegisterMyServiceServer(s grpc.ServiceRegistrar, srv MyServiceServer) {
 	s.RegisterService(&MyService_ServiceDesc, srv)
 }
 
-func _MyService_MyMethod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MyRequest)
+func _MyService_SampleServices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReqExample)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MyServiceServer).MyMethod(ctx, in)
+		return srv.(MyServiceServer).SampleServices(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/example.MyService/MyMethod",
+		FullMethod: "/example.MyService/SampleServices",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MyServiceServer).MyMethod(ctx, req.(*MyRequest))
+		return srv.(MyServiceServer).SampleServices(ctx, req.(*ReqExample))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -96,8 +96,8 @@ var MyService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*MyServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "MyMethod",
-			Handler:    _MyService_MyMethod_Handler,
+			MethodName: "SampleServices",
+			Handler:    _MyService_SampleServices_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
