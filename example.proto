@@ -4,13 +4,13 @@ package example;
 option go_package = "github.com/adimaryadi70/proto/example";
 
 service MyService {
-  rpc SampleServices (ReqExample) returns (ResExample);
+  rpc MyMethod (MyRequest) returns (MyResponse);
 }
 
-message ReqExample {
+message MyRequest {
   string data = 1;
 }
 
-message ResExample {
+message MyResponse {
   string result = 1;
 }
