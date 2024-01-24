@@ -23,6 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MyServiceClient interface {
 	MyMethod(ctx context.Context, in *MyRequest, opts ...grpc.CallOption) (*MyResponse, error)
+	Hello(ctx context.Context, in *MyRequest, opts ...grpc.CallOption) (*MyResponse, error)
+	StreamMessages(ctx context.Context, opts ...grpc.CallOption) (MyService_StreamMessagesClient, error)
 }
 
 type myServiceClient struct {
@@ -42,11 +44,53 @@ func (c *myServiceClient) MyMethod(ctx context.Context, in *MyRequest, opts ...g
 	return out, nil
 }
 
+func (c *myServiceClient) Hello(ctx context.Context, in *MyRequest, opts ...grpc.CallOption) (*MyResponse, error) {
+	out := new(MyResponse)
+	err := c.cc.Invoke(ctx, "/example.MyService/Hello", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *myServiceClient) StreamMessages(ctx context.Context, opts ...grpc.CallOption) (MyService_StreamMessagesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &MyService_ServiceDesc.Streams[0], "/example.MyService/StreamMessages", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &myServiceStreamMessagesClient{stream}
+	return x, nil
+}
+
+type MyService_StreamMessagesClient interface {
+	Send(*MyRequest) error
+	Recv() (*MyResponse, error)
+	grpc.ClientStream
+}
+
+type myServiceStreamMessagesClient struct {
+	grpc.ClientStream
+}
+
+func (x *myServiceStreamMessagesClient) Send(m *MyRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *myServiceStreamMessagesClient) Recv() (*MyResponse, error) {
+	m := new(MyResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // MyServiceServer is the server API for MyService service.
 // All implementations must embed UnimplementedMyServiceServer
 // for forward compatibility
 type MyServiceServer interface {
 	MyMethod(context.Context, *MyRequest) (*MyResponse, error)
+	Hello(context.Context, *MyRequest) (*MyResponse, error)
+	StreamMessages(MyService_StreamMessagesServer) error
 	mustEmbedUnimplementedMyServiceServer()
 }
 
@@ -56,6 +100,12 @@ type UnimplementedMyServiceServer struct {
 
 func (UnimplementedMyServiceServer) MyMethod(context.Context, *MyRequest) (*MyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MyMethod not implemented")
+}
+func (UnimplementedMyServiceServer) Hello(context.Context, *MyRequest) (*MyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Hello not implemented")
+}
+func (UnimplementedMyServiceServer) StreamMessages(MyService_StreamMessagesServer) error {
+	return status.Errorf(codes.Unimplemented, "method StreamMessages not implemented")
 }
 func (UnimplementedMyServiceServer) mustEmbedUnimplementedMyServiceServer() {}
 
@@ -88,6 +138,50 @@ func _MyService_MyMethod_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MyService_Hello_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MyServiceServer).Hello(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/example.MyService/Hello",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MyServiceServer).Hello(ctx, req.(*MyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MyService_StreamMessages_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(MyServiceServer).StreamMessages(&myServiceStreamMessagesServer{stream})
+}
+
+type MyService_StreamMessagesServer interface {
+	Send(*MyResponse) error
+	Recv() (*MyRequest, error)
+	grpc.ServerStream
+}
+
+type myServiceStreamMessagesServer struct {
+	grpc.ServerStream
+}
+
+func (x *myServiceStreamMessagesServer) Send(m *MyResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *myServiceStreamMessagesServer) Recv() (*MyRequest, error) {
+	m := new(MyRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // MyService_ServiceDesc is the grpc.ServiceDesc for MyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -99,7 +193,18 @@ var MyService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "MyMethod",
 			Handler:    _MyService_MyMethod_Handler,
 		},
+		{
+			MethodName: "Hello",
+			Handler:    _MyService_Hello_Handler,
+		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "StreamMessages",
+			Handler:       _MyService_StreamMessages_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "example.proto",
 }
