@@ -6,7 +6,7 @@ option go_package = "github.com/adimaryadi70/proto/example";
 service MyService {
   rpc MyMethod (MyRequest) returns (MyResponse);
   rpc Hello(MyRequest) returns (MyResponse);
-  rpc StreamMessages (stream MyRequest) returns (stream MyResponse);
+  rpc StreamMessages(stream MyRequest) returns (stream MyResponse);
 }
 
 message MyRequest {
