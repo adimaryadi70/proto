@@ -1,0 +1,13 @@
+syntax = "proto3";
+package broadcast;
+option go_package = "github.com/adimaryadi70/proto/broadcast";
+
+service BroadcastService {
+  rpc BroadcastMessage(Message) returns (EmptyResponse);
+}
+
+message Message {
+  string content = 1;
+}
+
+message EmptyResponse {}
