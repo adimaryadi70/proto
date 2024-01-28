@@ -22,7 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BroadcastServiceClient interface {
-	BroadcastMessage(ctx context.Context, in *Message, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (BroadcastService_SubscribeClient, error)
+	BroadcastMessage(ctx context.Context, in *BroadcastRequest, opts ...grpc.CallOption) (*BroadcastResponse, error)
 }
 
 type broadcastServiceClient struct {
@@ -33,8 +34,40 @@ func NewBroadcastServiceClient(cc grpc.ClientConnInterface) BroadcastServiceClie
 	return &broadcastServiceClient{cc}
 }
 
-func (c *broadcastServiceClient) BroadcastMessage(ctx context.Context, in *Message, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	out := new(EmptyResponse)
+func (c *broadcastServiceClient) Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (BroadcastService_SubscribeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &BroadcastService_ServiceDesc.Streams[0], "/broadcast.BroadcastService/Subscribe", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &broadcastServiceSubscribeClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type BroadcastService_SubscribeClient interface {
+	Recv() (*BroadcastResponse, error)
+	grpc.ClientStream
+}
+
+type broadcastServiceSubscribeClient struct {
+	grpc.ClientStream
+}
+
+func (x *broadcastServiceSubscribeClient) Recv() (*BroadcastResponse, error) {
+	m := new(BroadcastResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *broadcastServiceClient) BroadcastMessage(ctx context.Context, in *BroadcastRequest, opts ...grpc.CallOption) (*BroadcastResponse, error) {
+	out := new(BroadcastResponse)
 	err := c.cc.Invoke(ctx, "/broadcast.BroadcastService/BroadcastMessage", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -46,7 +79,8 @@ func (c *broadcastServiceClient) BroadcastMessage(ctx context.Context, in *Messa
 // All implementations must embed UnimplementedBroadcastServiceServer
 // for forward compatibility
 type BroadcastServiceServer interface {
-	BroadcastMessage(context.Context, *Message) (*EmptyResponse, error)
+	Subscribe(*SubscribeRequest, BroadcastService_SubscribeServer) error
+	BroadcastMessage(context.Context, *BroadcastRequest) (*BroadcastResponse, error)
 	mustEmbedUnimplementedBroadcastServiceServer()
 }
 
@@ -54,7 +88,10 @@ type BroadcastServiceServer interface {
 type UnimplementedBroadcastServiceServer struct {
 }
 
-func (UnimplementedBroadcastServiceServer) BroadcastMessage(context.Context, *Message) (*EmptyResponse, error) {
+func (UnimplementedBroadcastServiceServer) Subscribe(*SubscribeRequest, BroadcastService_SubscribeServer) error {
+	return status.Errorf(codes.Unimplemented, "method Subscribe not implemented")
+}
+func (UnimplementedBroadcastServiceServer) BroadcastMessage(context.Context, *BroadcastRequest) (*BroadcastResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BroadcastMessage not implemented")
 }
 func (UnimplementedBroadcastServiceServer) mustEmbedUnimplementedBroadcastServiceServer() {}
@@ -70,8 +107,29 @@ func RegisterBroadcastServiceServer(s grpc.ServiceRegistrar, srv BroadcastServic
 	s.RegisterService(&BroadcastService_ServiceDesc, srv)
 }
 
+func _BroadcastService_Subscribe_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(SubscribeRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(BroadcastServiceServer).Subscribe(m, &broadcastServiceSubscribeServer{stream})
+}
+
+type BroadcastService_SubscribeServer interface {
+	Send(*BroadcastResponse) error
+	grpc.ServerStream
+}
+
+type broadcastServiceSubscribeServer struct {
+	grpc.ServerStream
+}
+
+func (x *broadcastServiceSubscribeServer) Send(m *BroadcastResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 func _BroadcastService_BroadcastMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Message)
+	in := new(BroadcastRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -83,7 +141,7 @@ func _BroadcastService_BroadcastMessage_Handler(srv interface{}, ctx context.Con
 		FullMethod: "/broadcast.BroadcastService/BroadcastMessage",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BroadcastServiceServer).BroadcastMessage(ctx, req.(*Message))
+		return srv.(BroadcastServiceServer).BroadcastMessage(ctx, req.(*BroadcastRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -100,6 +158,12 @@ var BroadcastService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BroadcastService_BroadcastMessage_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Subscribe",
+			Handler:       _BroadcastService_Subscribe_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "broadcast.proto",
 }

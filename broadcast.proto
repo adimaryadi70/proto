@@ -3,11 +3,18 @@ package broadcast;
 option go_package = "github.com/adimaryadi70/proto/broadcast";
 
 service BroadcastService {
-  rpc BroadcastMessage(Message) returns (EmptyResponse);
+    rpc Subscribe (SubscribeRequest) returns (stream BroadcastResponse); // Use "stream" here
+    rpc BroadcastMessage (BroadcastRequest) returns (BroadcastResponse);
 }
 
-message Message {
-  string content = 1;
+message SubscribeRequest {
+    string client_id = 1;
 }
 
-message EmptyResponse {}
+message BroadcastRequest {
+    string content = 1;
+}
+
+message BroadcastResponse {
+    string content = 1;
+}

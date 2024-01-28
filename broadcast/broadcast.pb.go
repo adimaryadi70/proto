@@ -20,16 +20,16 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Message struct {
+type SubscribeRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Content string `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
+	ClientId string `protobuf:"bytes,1,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
 }
 
-func (x *Message) Reset() {
-	*x = Message{}
+func (x *SubscribeRequest) Reset() {
+	*x = SubscribeRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_broadcast_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -37,13 +37,13 @@ func (x *Message) Reset() {
 	}
 }
 
-func (x *Message) String() string {
+func (x *SubscribeRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Message) ProtoMessage() {}
+func (*SubscribeRequest) ProtoMessage() {}
 
-func (x *Message) ProtoReflect() protoreflect.Message {
+func (x *SubscribeRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_broadcast_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -55,26 +55,28 @@ func (x *Message) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Message.ProtoReflect.Descriptor instead.
-func (*Message) Descriptor() ([]byte, []int) {
+// Deprecated: Use SubscribeRequest.ProtoReflect.Descriptor instead.
+func (*SubscribeRequest) Descriptor() ([]byte, []int) {
 	return file_broadcast_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Message) GetContent() string {
+func (x *SubscribeRequest) GetClientId() string {
 	if x != nil {
-		return x.Content
+		return x.ClientId
 	}
 	return ""
 }
 
-type EmptyResponse struct {
+type BroadcastRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	Content string `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
 }
 
-func (x *EmptyResponse) Reset() {
-	*x = EmptyResponse{}
+func (x *BroadcastRequest) Reset() {
+	*x = BroadcastRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_broadcast_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -82,13 +84,13 @@ func (x *EmptyResponse) Reset() {
 	}
 }
 
-func (x *EmptyResponse) String() string {
+func (x *BroadcastRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*EmptyResponse) ProtoMessage() {}
+func (*BroadcastRequest) ProtoMessage() {}
 
-func (x *EmptyResponse) ProtoReflect() protoreflect.Message {
+func (x *BroadcastRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_broadcast_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -100,24 +102,89 @@ func (x *EmptyResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use EmptyResponse.ProtoReflect.Descriptor instead.
-func (*EmptyResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use BroadcastRequest.ProtoReflect.Descriptor instead.
+func (*BroadcastRequest) Descriptor() ([]byte, []int) {
 	return file_broadcast_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *BroadcastRequest) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+type BroadcastResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Content string `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
+}
+
+func (x *BroadcastResponse) Reset() {
+	*x = BroadcastResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_broadcast_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BroadcastResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BroadcastResponse) ProtoMessage() {}
+
+func (x *BroadcastResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_broadcast_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BroadcastResponse.ProtoReflect.Descriptor instead.
+func (*BroadcastResponse) Descriptor() ([]byte, []int) {
+	return file_broadcast_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *BroadcastResponse) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
 }
 
 var File_broadcast_proto protoreflect.FileDescriptor
 
 var file_broadcast_proto_rawDesc = []byte{
 	0x0a, 0x0f, 0x62, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x12, 0x09, 0x62, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x22, 0x23, 0x0a, 0x07,
-	0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65,
-	0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e,
-	0x74, 0x22, 0x0f, 0x0a, 0x0d, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x32, 0x54, 0x0a, 0x10, 0x42, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x53,
-	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x40, 0x0a, 0x10, 0x42, 0x72, 0x6f, 0x61, 0x64, 0x63,
-	0x61, 0x73, 0x74, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x12, 0x2e, 0x62, 0x72, 0x6f,
-	0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x18,
-	0x2e, 0x62, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79,
+	0x6f, 0x12, 0x09, 0x62, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x22, 0x2f, 0x0a, 0x10,
+	0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x62, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x1b, 0x0a, 0x09, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x08, 0x63, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x49, 0x64, 0x22, 0x2c, 0x0a,
+	0x10, 0x42, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x22, 0x2d, 0x0a, 0x11, 0x42,
+	0x72, 0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x32, 0xab, 0x01, 0x0a, 0x10, 0x42,
+	0x72, 0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12,
+	0x48, 0x0a, 0x09, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x62, 0x65, 0x12, 0x1b, 0x2e, 0x62,
+	0x72, 0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x2e, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69,
+	0x62, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x62, 0x72, 0x6f, 0x61,
+	0x64, 0x63, 0x61, 0x73, 0x74, 0x2e, 0x42, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x30, 0x01, 0x12, 0x4d, 0x0a, 0x10, 0x42, 0x72, 0x6f,
+	0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x1b, 0x2e,
+	0x62, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x2e, 0x42, 0x72, 0x6f, 0x61, 0x64, 0x63,
+	0x61, 0x73, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x62, 0x72, 0x6f,
+	0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x2e, 0x42, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74,
 	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x29, 0x5a, 0x27, 0x67, 0x69, 0x74, 0x68,
 	0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x61, 0x64, 0x69, 0x6d, 0x61, 0x72, 0x79, 0x61, 0x64,
 	0x69, 0x37, 0x30, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x62, 0x72, 0x6f, 0x61, 0x64, 0x63,
@@ -136,16 +203,19 @@ func file_broadcast_proto_rawDescGZIP() []byte {
 	return file_broadcast_proto_rawDescData
 }
 
-var file_broadcast_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_broadcast_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_broadcast_proto_goTypes = []interface{}{
-	(*Message)(nil),       // 0: broadcast.Message
-	(*EmptyResponse)(nil), // 1: broadcast.EmptyResponse
+	(*SubscribeRequest)(nil),  // 0: broadcast.SubscribeRequest
+	(*BroadcastRequest)(nil),  // 1: broadcast.BroadcastRequest
+	(*BroadcastResponse)(nil), // 2: broadcast.BroadcastResponse
 }
 var file_broadcast_proto_depIdxs = []int32{
-	0, // 0: broadcast.BroadcastService.BroadcastMessage:input_type -> broadcast.Message
-	1, // 1: broadcast.BroadcastService.BroadcastMessage:output_type -> broadcast.EmptyResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	0, // 0: broadcast.BroadcastService.Subscribe:input_type -> broadcast.SubscribeRequest
+	1, // 1: broadcast.BroadcastService.BroadcastMessage:input_type -> broadcast.BroadcastRequest
+	2, // 2: broadcast.BroadcastService.Subscribe:output_type -> broadcast.BroadcastResponse
+	2, // 3: broadcast.BroadcastService.BroadcastMessage:output_type -> broadcast.BroadcastResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -158,7 +228,7 @@ func file_broadcast_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_broadcast_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Message); i {
+			switch v := v.(*SubscribeRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -170,7 +240,19 @@ func file_broadcast_proto_init() {
 			}
 		}
 		file_broadcast_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EmptyResponse); i {
+			switch v := v.(*BroadcastRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_broadcast_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*BroadcastResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -188,7 +270,7 @@ func file_broadcast_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_broadcast_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
