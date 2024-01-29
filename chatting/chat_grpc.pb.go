@@ -4,7 +4,7 @@
 // - protoc             v3.9.1
 // source: chat.proto
 
-package chat
+package chatting
 
 import (
 	context "context"
@@ -34,7 +34,7 @@ func NewChatRoomClient(cc grpc.ClientConnInterface) ChatRoomClient {
 }
 
 func (c *chatRoomClient) Chat(ctx context.Context, opts ...grpc.CallOption) (ChatRoom_ChatClient, error) {
-	stream, err := c.cc.NewStream(ctx, &ChatRoom_ServiceDesc.Streams[0], "/chat.ChatRoom/Chat", opts...)
+	stream, err := c.cc.NewStream(ctx, &ChatRoom_ServiceDesc.Streams[0], "/chatting.ChatRoom/Chat", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func (x *chatRoomChatServer) Recv() (*ChatRequest, error) {
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ChatRoom_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "chat.ChatRoom",
+	ServiceName: "chatting.ChatRoom",
 	HandlerType: (*ChatRoomServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{

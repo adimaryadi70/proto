@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-package chat;
-option go_package = "github.com/adimaryadi70/proto/chat";
+package chatting;
+option go_package = "github.com/adimaryadi70/proto/chatting";
 
 service ChatRoom {
     rpc Chat (stream ChatRequest) returns (stream ChatResponse) {}
